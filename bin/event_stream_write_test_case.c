@@ -135,7 +135,7 @@ int main(void) {
     uint32_t original_length = aws_event_stream_message_total_length(&msg);
     uint8_t *buffer_cpy = aws_mem_acquire(alloc, original_length);
     memcpy(buffer_cpy, aws_event_stream_message_buffer(&msg), original_length);
-    aws_write_u32(buffer_cpy, original_length + 1);
+    aws_write_u32(original_length + 1, buffer_cpy);
 
     write_negative_test_case(".", "corrupted_length", buffer_cpy, original_length, "Prelude checksum mismatch");
     aws_mem_release(alloc, buffer_cpy);
@@ -147,7 +147,7 @@ int main(void) {
 
     uint32_t original_hdr_len = aws_event_stream_message_headers_len(&msg);
 
-    aws_write_u32(buffer_cpy + 4, original_hdr_len + 1);
+    aws_write_u32(original_hdr_len + 1, buffer_cpy + 4);
 
     write_negative_test_case(".", "corrupted_header_len", buffer_cpy, original_length,
                              "Prelude checksum mismatch");
